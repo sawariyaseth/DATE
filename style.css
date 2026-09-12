@@ -1,0 +1,515 @@
+/* ============================================
+   CSS VARIABLES (updated by JavaScript from config)
+   ============================================ */
+:root {
+    /* Colors */
+    --background-color-1: #ffafbd;
+    --background-color-2: #ffc3a0;
+    --button-color: #ff6b6b;
+    --button-hover: #ff8787;
+    --text-color: #ff4757;
+
+    /* Animations */
+    --float-duration: 15s;
+    --float-distance: 50px;
+    --bounce-speed: 0.5s;
+    --heart-explosion-size: 1.5;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, var(--background-color-1), var(--background-color-2));
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 600px;
+    margin: 20px;
+    overflow: visible !important;
+}
+
+/* ============================================
+   FLOATING BACKGROUND ELEMENTS
+   ============================================ */
+.floating-elements {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.heart, .bear {
+    position: absolute;
+    font-size: 2rem;
+    animation: float var(--float-duration) linear infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(100vh) translateX(0); }
+    100% { transform: translateY(-100px) translateX(var(--float-distance)); }
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.cute-btn {
+    background: var(--button-color);
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 20px;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: transform 0.3s, background 0.3s, left 0.35s ease, top 0.35s ease;
+}
+
+.cute-btn:hover {
+    transform: scale(1.1);
+    background: var(--button-hover);
+}
+
+.hidden {
+    display: none;
+}
+
+.disabled-btn {
+    opacity: 0.7;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Secret hint button, tucked away and barely noticeable */
+.secret-answer {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    margin-top: 0;
+    opacity: 0.2;
+    transition: opacity 0.3s;
+    transform: scale(0.7);
+    z-index: 2;
+    animation: subtle-hint 2s infinite alternate;
+    animation-delay: 5s;
+}
+
+.secret-answer .cute-btn {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+}
+
+.secret-answer:hover {
+    opacity: 1;
+    animation: none;
+}
+
+@keyframes subtle-hint {
+    0% { opacity: 0.2; }
+    100% { opacity: 0.3; }
+}
+
+/* ============================================
+   LOVE METER
+   ============================================ */
+.love-meter {
+    position: relative;
+    width: 100%;
+    margin: 20px auto;
+    overflow: visible;
+    padding: 10px 0;
+}
+
+.love-meter p {
+    font-size: 1.2em;
+    margin: 15px 0;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.slider {
+    width: 100%;
+    height: 25px;
+    background: linear-gradient(to right, #ff6b6b, #ff8787, #ffb8b8);
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+    position: relative;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.2);
+    transition: all 0.3s ease;
+}
+
+.slider:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.3);
+}
+
+.slider::-webkit-slider-runnable-track,
+.slider::-moz-range-track {
+    width: 100%;
+    height: 25px;
+    background: linear-gradient(to right, #ff6b6b, #ff8787, #ffb8b8);
+    border-radius: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(135deg, #ff4757, #ff6b6b);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(255, 71, 87, 0.3);
+    position: relative;
+    z-index: 10;
+    margin-top: -5px;
+    border: 3px solid white;
+    transition: all 0.2s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+}
+
+.slider::-moz-range-thumb {
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(135deg, #ff4757, #ff6b6b);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(255, 71, 87, 0.3);
+    position: relative;
+    z-index: 10;
+    border: 3px solid white;
+    transition: all 0.2s ease;
+}
+
+.slider::-moz-range-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+}
+
+#extraLove {
+    color: #ff6b6b;
+    font-weight: bold;
+    animation: bounce 0.5s infinite alternate;
+    display: block;
+    padding: 5px 10px;
+    border-radius: 10px;
+    background: rgba(255, 107, 107, 0.1);
+    text-shadow: 0 2px 4px rgba(255, 71, 87, 0.2);
+    transition: all 0.3s ease;
+    margin-top: 5px;
+}
+
+#extraLove.super-love {
+    background: rgba(255, 107, 107, 0.2);
+    font-size: 1.2em;
+    padding: 8px 15px;
+    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.2);
+}
+
+#loveValue {
+    font-weight: bold;
+    color: #ff4757;
+    font-size: 1.3em;
+    transition: all 0.3s ease;
+}
+
+.love-value-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+@keyframes bounce {
+    from { transform: scale(1); }
+    to { transform: scale(1.2); }
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+h1, h2 {
+    font-family: Arial, sans-serif;
+    font-weight: 700;
+}
+
+h1 {
+    color: #ff6b6b;
+    margin-bottom: 2rem;
+}
+
+h2 {
+    color: #ff8787;
+}
+
+.super-love {
+    font-size: 1.5em;
+    color: #ff4757;
+    font-weight: bold;
+    transform: scale(1.2);
+    display: inline-block;
+    text-shadow: 2px 2px 4px rgba(255, 71, 87, 0.3);
+}
+
+/* ============================================
+   CELEBRATION
+   ============================================ */
+.hearts-explosion {
+    font-size: 2rem;
+    animation: explode 1s ease-out forwards;
+    margin-top: 30px;
+}
+
+@keyframes explode {
+    0% { transform: scale(0); }
+    50% { transform: scale(var(--heart-explosion-size)); }
+    100% { transform: scale(1); }
+}
+
+.celebration-text {
+    font-size: 3em;
+    color: #ff4757;
+    font-weight: bold;
+    margin: 30px 0;
+    animation: bounce var(--bounce-speed) infinite alternate;
+    text-shadow: 2px 2px 4px rgba(255, 71, 87, 0.3);
+}
+
+/* ============================================
+   MUSIC PLAYER
+   Kept intentionally subtle so it never competes
+   with the questions for attention.
+   ============================================ */
+.music-controls {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.music-btn {
+    background: rgba(255, 255, 255, 0.35);
+    color: #b2222e;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.music-btn:hover {
+    background: rgba(255, 255, 255, 0.55);
+    transform: scale(1.05);
+}
+
+/* ============================================
+   DATE & TIME PICKER
+   Shown after she says yes to the final question.
+   Uses the same theme variables as the rest of the page.
+   ============================================ */
+.date-time-picker {
+    margin-top: 30px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(255, 107, 107, 0.15);
+}
+
+.date-time-intro {
+    color: var(--text-color);
+    font-size: 1.05rem;
+    margin: 0 0 18px 0;
+}
+
+.date-time-form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 14px;
+}
+
+.date-time-field {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.date-time-field label {
+    font-size: 0.85rem;
+    color: #a85a5a;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.date-time-field input {
+    padding: 10px 14px;
+    border: 2px solid rgba(255, 107, 107, 0.25);
+    border-radius: 14px;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    font-family: inherit;
+    background: white;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.date-time-field input:focus {
+    outline: none;
+    border-color: var(--button-color);
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.15);
+}
+
+#sendDateBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.field-error {
+    display: block;
+    color: #ff6b81;
+    font-size: 0.8rem;
+    margin-top: 6px;
+}
+
+/* Invisible to people, tempting to spam bots */
+.hp-field {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.date-time-sent {
+    color: var(--text-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.date-time-error {
+    margin-top: 16px;
+}
+
+.date-time-error-text {
+    color: var(--text-color);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* Envelope that seals, opens, then flies up and away */
+.flying-envelope {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    font-size: 2.5rem;
+    transform: translate(-50%, -50%) scale(1);
+    z-index: 3000;
+    pointer-events: none;
+}
+
+.flying-envelope.seal {
+    animation: envelopeSeal 0.5s ease forwards;
+}
+
+.flying-envelope.open {
+    animation: envelopeOpen 0.5s ease forwards;
+}
+
+.flying-envelope.fly {
+    animation: envelopeFly 1.1s ease-in forwards;
+}
+
+@keyframes envelopeSeal {
+    0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+    50% { transform: translate(-50%, -50%) scale(1.25) rotate(-4deg); }
+    100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+}
+
+@keyframes envelopeOpen {
+    0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+    50% { transform: translate(-50%, -50%) scale(1.35) rotate(4deg); }
+    100% { transform: translate(-50%, -50%) scale(1.1) rotate(0deg); }
+}
+
+@keyframes envelopeFly {
+    0% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+    40% { transform: translate(-50%, -60%) scale(1.15) rotate(-6deg); opacity: 1; }
+    100% { transform: translate(-50%, -160vh) scale(0.4) rotate(8deg); opacity: 0; }
+}
+
+/* Small heart burst trailing the envelope (kept modest on purpose) */
+.burst-heart {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    font-size: 1.4rem;
+    color: var(--text-color);
+    pointer-events: none;
+    z-index: 2999;
+    animation: heartBurst 1.4s ease-out forwards;
+}
+
+@keyframes heartBurst {
+    0% { transform: translate(-50%, -50%) scale(0.4); opacity: 1; }
+    100% {
+        transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1.1) rotate(var(--rot));
+        opacity: 0;
+    }
+}
+
+/* ============================================
+   RESPONSIVE TWEAKS
+   ============================================ */
+@media (max-width: 480px) {
+    .container {
+        padding: 1.5rem 1.2rem;
+    }
+
+    .celebration-text {
+        font-size: 2.2em;
+    }
+
+    .music-controls {
+        top: 12px;
+        right: 12px;
+    }
+
+    .music-btn {
+        font-size: 0.75rem;
+        padding: 6px 12px;
+    }
+
+    .date-time-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .date-time-field {
+        align-items: center;
+        text-align: center;
+    }
+}
