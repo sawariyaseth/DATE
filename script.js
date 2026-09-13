@@ -114,7 +114,7 @@ const config = {
         // to be hosted on Netlify (not just any static host).
        
         // endpoint: "/.netlify/functions/send-date-email"
-       endpoint: "/send-date-email"
+       endpoint: "https://passionate-happiness-production-d92c.up.railway.app/api/send-date-email"
     }
 };
 
