@@ -62,20 +62,32 @@ app.post("/api/send-date-email", async (req, res) => {
     //     pass: process.env.GMAIL_APP_PASSWORD
     //   }
     // });
-    const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+//     const transporter = nodemailer.createTransport({
+//   host: "smtp.gmail.com",
+//   port: 587,
+//   secure: false, // TLS via STARTTLS
+//   requireTLS: true,
+//   auth: {
+//     user: process.env.GMAIL_USER,
+//     pass: process.env.GMAIL_APP_PASSWORD
+//   },
+//   tls: {
+//     family: 4 // force IPv4
+//   }
+// });
+const transporter = nodemailer.createTransport({
+  host: "74.125.69.108", // smtp.gmail.com IPv4 (one of Google's IPv4s)
   port: 587,
-  secure: false, // TLS via STARTTLS
+  secure: false,
   requireTLS: true,
   auth: {
     user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD
+    pass: process.env.GMAIL_APP_PASSWORD,
   },
   tls: {
-    family: 4 // force IPv4
-  }
+    servername: "smtp.gmail.com", // keep TLS cert validation for Gmail hostname
+  },
 });
-
     await transporter.sendMail({
       from: process.env.GMAIL_USER,
       to: process.env.MY_EMAIL_ADDRESS,
