@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
+const dns = require("dns");
+dns.setDefaultResultOrder("ipv4first");
 const path = require("path");
 
 const app = express();
@@ -53,13 +55,26 @@ app.post("/api/send-date-email", async (req, res) => {
       return res.status(500).json({ error: "Email service not configured" });
     }
 
+    // const transporter = nodemailer.createTransport({
+    //   service: "Gmail",
+    //   auth: {
+    //     user: process.env.GMAIL_USER,
+    //     pass: process.env.GMAIL_APP_PASSWORD
+    //   }
+    // });
     const transporter = nodemailer.createTransport({
-      service: "Gmail",
-      auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD
-      }
-    });
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, // TLS via STARTTLS
+  requireTLS: true,
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD
+  },
+  tls: {
+    family: 4 // force IPv4
+  }
+});
 
     await transporter.sendMail({
       from: process.env.GMAIL_USER,
