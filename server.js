@@ -12,7 +12,6 @@ app.use(express.static(__dirname));
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// basic in-memory rate limit
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX = 5;
 const submissionLog = new Map();
@@ -40,7 +39,6 @@ app.post("/api/send-date-email", async (req, res) => {
   try {
     const { name, email, date, time, company } = req.body || {};
 
-    // honeypot
     if (company) return res.json({ status: "success" });
 
     if (!email || !date || !time) {
@@ -51,11 +49,7 @@ app.post("/api/send-date-email", async (req, res) => {
       return res.status(400).json({ error: "Invalid email address" });
     }
 
-    if (
-      !process.env.GMAIL_USER ||
-      !process.env.GMAIL_APP_PASSWORD ||
-      !process.env.MY_EMAIL_ADDRESS
-    ) {
+    if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD || !process.env.MY_EMAIL_ADDRESS) {
       return res.status(500).json({ error: "Email service not configured" });
     }
 
@@ -63,8 +57,8 @@ app.post("/api/send-date-email", async (req, res) => {
       service: "Gmail",
       auth: {
         user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD,
-      },
+        pass: process.env.GMAIL_APP_PASSWORD
+      }
     });
 
     await transporter.sendMail({
@@ -72,7 +66,7 @@ app.post("/api/send-date-email", async (req, res) => {
       to: process.env.MY_EMAIL_ADDRESS,
       replyTo: email,
       subject: "We have a date! 💕",
-      text: `Name: ${name}\nEmail: ${email}\nDate: ${date}\nTime: ${time}`,
+      text: `Name: ${name}\nEmail: ${email}\nDate: ${date}\nTime: ${time}`
     });
 
     return res.json({ status: "success" });
@@ -82,7 +76,6 @@ app.post("/api/send-date-email", async (req, res) => {
   }
 });
 
-// fallback to index.html
 app.get("*", (_, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
