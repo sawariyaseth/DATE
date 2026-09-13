@@ -112,7 +112,9 @@ const config = {
         // netlify/functions/send-date-email.js — Netlify then serves it
         // at exactly this path automatically. Requires the site itself
         // to be hosted on Netlify (not just any static host).
-        endpoint: "/.netlify/functions/send-date-email"
+       
+        // endpoint: "/.netlify/functions/send-date-email"
+       endpoint: "/send-date-email"
     }
 };
 
