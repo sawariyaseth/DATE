@@ -382,9 +382,11 @@ function setupDateTimePicker() {
         errorBlock.classList.add("hidden");
     });
 
-    form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        if (sendBtn.disabled) return;
+   const response = await fetch("https://passionate-happiness-production-d92c.up.railway.app/api/send-date-email", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ name, email, date, time }),
+});
 
         // Basic, practical spam guard: a filled honeypot or a suspiciously
         // instant submit both suggest a bot rather than a person filling
