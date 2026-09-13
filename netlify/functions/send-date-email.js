@@ -1,0 +1,114 @@
+/**
+ * Netlify Function — receives { name, email, date, time, company } as JSON
+ * from script.js and emails the details to YOU.
+ *
+ * SECURITY NOTES
+ * - Your destination address lives only in the MY_EMAIL_ADDRESS environment
+ *   variable on Netlify's servers. It is never sent from, or present in,
+ *   the frontend code — the browser has no way to see it.
+ * - Your Gmail credentials live only in GMAIL_USER / GMAIL_APP_PASSWORD,
+ *   also environment variables. Never commit these to Git or paste them
+ *   into any HTML/CSS/JS file.
+ * - Use a Gmail "App Password", not your normal Gmail password (see the
+ *   setup steps in the chat response this file came with).
+ *
+ * SETUP
+ * 1. Put this file at:  netlify/functions/send-date-email.js
+ * 2. In your project, run:  npm install nodemailer
+ * 3. In Netlify → Site configuration → Environment variables, add:
+ *      MY_EMAIL_ADDRESS    -> where you want the notification sent
+ *      GMAIL_USER          -> the Gmail address used to send it
+ *      GMAIL_APP_PASSWORD  -> a 16-character Gmail App Password
+ * 4. Deploy. Netlify automatically serves this at:
+ *      /.netlify/functions/send-date-email
+ *    which is already the default in script.js's config.dateTime.endpoint.
+ */
+
+const nodemailer = require("nodemailer");
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Best-effort in-memory rate limit: max 5 submissions per IP per 10 minutes.
+// This resets whenever the function's container restarts (cold start), so
+// it's a practical speed bump against casual spam, not a durable defense.
+// For something sturdier, put a real store in front of this (Netlify Blobs,
+// Upstash Redis, etc.) keyed the same way.
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const RATE_LIMIT_MAX = 5;
+const submissionLog = new Map(); // ip -> array of timestamps
+
+function isRateLimited(ip) {
+    const now = Date.now();
+    const timestamps = (submissionLog.get(ip) || []).filter(t => now - t < RATE_LIMIT_WINDOW_MS);
+
+    timestamps.push(now);
+    submissionLog.set(ip, timestamps);
+
+    return timestamps.length > RATE_LIMIT_MAX;
+}
+
+exports.handler = async (event) => {
+    const corsHeaders = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type"
+    };
+
+    if (event.httpMethod === "OPTIONS") {
+        return { statusCode: 200, headers: corsHeaders, body: "" };
+    }
+
+    if (event.httpMethod !== "POST") {
+        return { statusCode: 405, headers: corsHeaders, body: JSON.stringify({ error: "Method Not Allowed" }) };
+    }
+
+    const ip = event.headers["x-nf-client-connection-ip"] || event.headers["x-forwarded-for"] || "unknown";
+
+    if (isRateLimited(ip)) {
+        return { statusCode: 429, headers: corsHeaders, body: JSON.stringify({ error: "Too many requests" }) };
+    }
+
+    try {
+        const { name, email, date, time, company } = JSON.parse(event.body || "{}");
+
+        // Honeypot: a real visitor never fills this in, since it's hidden via CSS.
+        // Quietly report success so a bot doesn't learn its submission was caught.
+        if (company) {
+            return { statusCode: 200, headers: corsHeaders, body: JSON.stringify({ status: "success" }) };
+        }
+
+        if (!email || !date || !time) {
+            return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: "Missing required fields" }) };
+        }
+
+        if (!EMAIL_REGEX.test(email)) {
+            return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: "Invalid email address" }) };
+        }
+
+        if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD || !process.env.MY_EMAIL_ADDRESS) {
+            return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: "Email service is not configured on server" }) };
+        }
+
+        const transporter = nodemailer.createTransport({
+            service: "Gmail",
+            auth: {
+                user: process.env.GMAIL_USER,
+                pass: process.env.GMAIL_APP_PASSWORD
+            }
+        });
+
+        await transporter.sendMail({
+            from: process.env.GMAIL_USER,
+            to: process.env.MY_EMAIL_ADDRESS, // set in Netlify env vars — never in frontend code
+            replyTo: email, // lets you just hit "reply" to reach her directly
+            subject: "We have a date! 💕",
+            text: `Name: ${name}\nEmail: ${email}\nDate: ${date}\nTime: ${time}`
+        });
+
+        return { statusCode: 200, headers: corsHeaders, body: JSON.stringify({ status: "success" }) };
+    } catch (error) {
+        // Log the real error server-side, but don't leak internals to the client.
+        console.error("Error sending date/time email:", error);
+        return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: "Failed to send email" }) };
+    }
+};
