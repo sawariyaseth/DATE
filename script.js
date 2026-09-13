@@ -49,9 +49,9 @@ const config = {
     },
 
     celebration: {
-        title: "Well... looks like we have a date. ✦",
-        message: "Now all that's left is choosing the day. And honestly, I'm already looking forward to it.",
-        emojis: "♡ ✦ ♡"
+        title: "Yay! ✦",
+        message: "Looks like we have a plan to make.",
+        emojis: "" // optional flourish line — leave blank to keep the page clean, like the mockup
     },
 
     colors: {
@@ -82,9 +82,6 @@ const config = {
         volume: 0.5
     },
 
-    // Shown after the final YES: lets her pick a day and time,
-    // then quietly delivers it to you. Your email address never
-    // needs to live in this file — see the note on `endpoint` below.
     // Shown after the final YES: lets her pick a day, time, and leave
     // her email, then quietly delivers it to you. Your email address
     // never has to live in this file — the serverless function reads
@@ -92,8 +89,8 @@ const config = {
     dateTime: {
         enabled: true,
 
-        heading: "Yay! ✦",
-        intro: "What day and time works for you?",
+        heading: "What day and time works for you?",
+        intro: "Pick a day and time that works for you — I'll take it from there. 💌",
 
         defaultSendText: "Send It 💌",
         sendingText: "Sending your answer... 💌",
@@ -296,7 +293,14 @@ function celebrate() {
     document.getElementById("celebration").classList.remove("hidden");
     document.getElementById("celebrationTitle").textContent = config.celebration.title;
     document.getElementById("celebrationMessage").textContent = config.celebration.message;
-    document.getElementById("celebrationEmojis").textContent = config.celebration.emojis;
+
+    const emojisEl = document.getElementById("celebrationEmojis");
+    if (config.celebration.emojis) {
+        emojisEl.textContent = config.celebration.emojis;
+        emojisEl.classList.remove("hidden");
+    } else {
+        emojisEl.classList.add("hidden");
+    }
 
     createHeartExplosion();
 
