@@ -294,6 +294,17 @@ h2 {
     text-shadow: 2px 2px 4px rgba(255, 71, 87, 0.3);
 }
 
+/* Small, understated caption under the "Yay! ✦" heading */
+.celebration-subtitle {
+    color: #a85a5a;
+    font-size: 0.95rem;
+    margin: 4px 0 18px;
+}
+
+#celebrationTitle {
+    margin-bottom: 0.5rem;
+}
+
 /* ============================================
    MUSIC PLAYER
    Kept intentionally subtle so it never competes
@@ -336,10 +347,14 @@ h2 {
     border-top: 1px solid rgba(255, 107, 107, 0.15);
 }
 
+.date-time-picker h2 {
+    margin-bottom: 8px;
+}
+
 .date-time-intro {
     color: var(--text-color);
     font-size: 1.05rem;
-    margin: 0 0 18px 0;
+    margin: 0 0 20px 0;
 }
 
 .date-time-form {
