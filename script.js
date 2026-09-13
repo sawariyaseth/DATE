@@ -71,7 +71,7 @@ const config = {
 
     music: {
         enabled: true,
-        autoplay: false,
+        autoplay: true,
 
         // Put a direct MP3 URL here, e.g. "https://example.com/song.mp3"
         // Leave blank and the button politely asks for one instead of breaking.
