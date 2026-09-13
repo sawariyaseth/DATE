@@ -485,36 +485,59 @@ function setupMusicPlayer() {
     const bgMusic = document.getElementById("bgMusic");
     const musicSource = document.getElementById("musicSource");
 
+    // Guard: required DOM nodes must exist
+    if (!musicControls || !musicToggle || !bgMusic || !musicSource) {
+        console.warn("Music player elements missing in HTML.");
+        return;
+    }
+
     if (!config.music.enabled) {
         musicControls.style.display = "none";
         return;
     }
 
-    musicSource.src = config.music.musicUrl;
-    bgMusic.volume = config.music.volume || 0.5;
+    // Normalize URL once and reuse everywhere
+    const musicUrl = (config.music.musicUrl || "").trim();
 
-    if (config.music.musicUrl) {
+    bgMusic.volume = typeof config.music.volume === "number" ? config.music.volume : 0.5;
+    musicToggle.textContent = config.music.startText;
+
+    if (musicUrl) {
+        musicSource.src = musicUrl;
+        bgMusic.load();
+    } else {
+        // No URL configured yet
+        musicSource.removeAttribute("src");
         bgMusic.load();
     }
 
-    musicToggle.textContent = config.music.startText;
+    musicToggle.addEventListener("click", async () => {
+        // Re-check from actual loaded source first (more reliable than config at click time)
+        const activeSrc = (musicSource.getAttribute("src") || "").trim();
 
-    musicToggle.addEventListener("click", () => {
         if (bgMusic.paused) {
-            if (!config.music.musicUrl) {
+            if (!activeSrc) {
                 alert("Add your MP3 URL in the musicUrl setting first.");
                 return;
             }
 
-            bgMusic.play();
-            musicToggle.textContent = config.music.stopText;
+            try {
+                await bgMusic.play();
+                musicToggle.textContent = config.music.stopText;
+            } catch (err) {
+                console.warn("Audio play failed:", err);
+                alert("Couldn't play audio. Check browser autoplay policy or file URL.");
+            }
         } else {
             bgMusic.pause();
             musicToggle.textContent = config.music.startText;
         }
     });
-}
 
+    bgMusic.addEventListener("ended", () => {
+        musicToggle.textContent = config.music.startText;
+    });
+}
 
 /* ============================================
    PAGE INITIALIZATION
