@@ -75,7 +75,7 @@ const config = {
 
         // Put a direct MP3 URL here, e.g. "https://example.com/song.mp3"
         // Leave blank and the button politely asks for one instead of breaking.
-        musicUrl: "",
+        musicUrl: "https://res.cloudinary.com/qcwcq8ho/video/upload/v1789239314/Clairo_-_Sofia__mp3.pm.mp3",
 
         startText: "♪ Play something nice",
         stopText: "Stop music",
