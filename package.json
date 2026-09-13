@@ -9,4 +9,9 @@
     "express": "^4.19.2",
     "nodemailer": "^10.0.9"
   }
+  {
+  "scripts": {
+    "start": "python3 -m http.server 8080"
+  }
+}
 }
