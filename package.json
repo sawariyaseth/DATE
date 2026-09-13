@@ -1,20 +1,13 @@
 {
-  "name": "date-app",
+  "name": "date",
   "version": "1.0.0",
-  "main": "server.js",
+  "private": true,
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.19.2",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
     "nodemailer": "^10.0.9"
   }
-  {
-  "scripts": {
-    "start": "python3 -m http.server 8080"
-  }
-}
-"scripts": {
-  "start": "node server.js"
-}
 }
