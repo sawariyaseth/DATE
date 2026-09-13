@@ -5,7 +5,7 @@
    ============================================ */
 const config = {
 
-    valentineName: "Anshii",
+    valentineName: "Barshu",
     pageTitle: "So... do you like me? 👀",
 
     floatingEmojis: {
